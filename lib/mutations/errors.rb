@@ -25,6 +25,9 @@ module Mutations
         # Money
         :money => "isn't money",
 
+        # IBAN
+        :iban => "isn't a valid IBAN",
+
         # String
         :empty => "can't be blank",
         :max_length => "is too long",

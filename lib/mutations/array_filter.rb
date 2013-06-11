@@ -35,6 +35,10 @@ module Mutations
       @element_filter = MoneyFilter.new(options)
     end
 
+    def iban(options = {})
+      @element_filter = IBANFilter.new(options)
+    end
+
     def boolean(options = {})
       @element_filter = BooleanFilter.new(options)
     end
