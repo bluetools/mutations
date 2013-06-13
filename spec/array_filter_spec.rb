@@ -101,6 +101,14 @@ describe "Mutations::ArrayFilter" do
     assert_equal [nil, nil, :min, :money], errors.symbolic
   end
 
+  it "lets you pass IBANs in arrays" do
+    f = Mutations::ArrayFilter.new(:iban) { iban }
+
+    filtered, errors = f.filter(["NL91ABNA0417164300","bob"])
+    assert_equal ["NL91ABNA0417164300","bob"], filtered
+    assert_equal [nil, :iban], errors.symbolic
+  end
+
   it "lets you pass ducks in arrays" do
     f = Mutations::ArrayFilter.new(:arr) { duck(:methods  => :length) }
 

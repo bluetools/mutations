@@ -47,6 +47,15 @@ describe "Mutations::HashFilter" do
     assert_equal nil, errors
   end
 
+  it "allows IBANs in hashes" do
+    hf = Mutations::HashFilter.new do
+      iban :foo
+    end
+    filtered, errors = hf.filter(:foo => "NL91ABNA0417164300")
+    assert_equal ({"foo" => "NL91ABNA0417164300"}), filtered
+    assert_equal nil, errors
+  end
+
   it "allows ducks in hashes" do
     hf = Mutations::HashFilter.new do
       duck :foo, :methods => [:length]
