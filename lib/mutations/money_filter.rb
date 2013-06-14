@@ -1,3 +1,6 @@
+require 'bigdecimal'
+require 'bigdecimal/util'
+
 module Mutations
   class MoneyFilter < InputFilter
     @default_options = {
@@ -15,9 +18,11 @@ module Mutations
         return [nil, :nils]
       end
 
-      # Ensure it's the correct data type (Float)
-      if !data.is_a?(Float)
-        if data.is_a?(String) && data =~ /^[-+]?\d*[.,]?\d+/
+      # Ensure it's the correct data type (BigDecimal)
+      if !data.is_a?(BigDecimal)
+        if data.is_a?(Float)
+          data = data.to_d
+        elsif data.is_a?(String) && data =~ /^[-+]?\d*[.,]?\d+/
           data = BigDecimal.new(data.gsub(',', '.'))
         elsif data.is_a?(Fixnum)
           data = BigDecimal.new(data.to_s)

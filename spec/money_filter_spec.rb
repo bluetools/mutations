@@ -4,50 +4,57 @@ describe "Mutations::MoneyFilter" do
 
   it "allows big decimals" do
     f = Mutations::MoneyFilter.new
+    filtered, errors = f.filter(BigDecimal.new('3.1415926'))
+    assert_equal BigDecimal.new('3.1415926'), filtered
+    assert_equal nil, errors
+  end
+
+  it "allows floats" do
+    f = Mutations::MoneyFilter.new
     filtered, errors = f.filter(3.1415926)
-    assert_equal 3.1415926, filtered
+    assert_equal BigDecimal.new('3.1415926'), filtered
     assert_equal nil, errors
   end
 
   it "allows strings that start with a digit" do
     f = Mutations::MoneyFilter.new
     filtered, errors = f.filter("3")
-    assert_equal 3.0, filtered
+    assert_equal BigDecimal.new('3.0'), filtered
     assert_equal nil, errors
   end
 
   it "allows string representation of float" do
     f = Mutations::MoneyFilter.new
     filtered, errors = f.filter("3.14")
-    assert_equal 3.14, filtered
+    assert_equal BigDecimal.new('3.14'), filtered
     assert_equal nil, errors
   end
 
   it "allows international string representation of an amount" do
     f = Mutations::MoneyFilter.new
     filtered, errors = f.filter("3,14")
-    assert_equal 3.14, filtered
+    assert_equal BigDecimal.new('3.14'), filtered
     assert_equal nil, errors
   end
 
   it "allows string representation of float without a number before dot" do
     f = Mutations::MoneyFilter.new
     filtered, errors = f.filter(".14")
-    assert_equal 0.14, filtered
+    assert_equal BigDecimal.new('0.14'), filtered
     assert_equal nil, errors
   end
 
   it "allows negative strings" do
     f = Mutations::MoneyFilter.new
     filtered, errors = f.filter("-.14")
-    assert_equal -0.14, filtered
+    assert_equal BigDecimal.new('-0.14'), filtered
     assert_equal nil, errors
   end
 
   it "allows strings with a positive sign" do
     f = Mutations::MoneyFilter.new
     filtered, errors = f.filter("+.14")
-    assert_equal 0.14, filtered
+    assert_equal BigDecimal.new('0.14'), filtered
     assert_equal nil, errors
   end
 
@@ -90,28 +97,28 @@ describe "Mutations::MoneyFilter" do
   it "considers low numbers invalid" do
     f = Mutations::MoneyFilter.new(:min => 10)
     filtered, errors = f.filter(3)
-    assert_equal 3, filtered
+    assert_equal BigDecimal.new('3'), filtered
     assert_equal :min, errors
   end
 
   it "considers low numbers valid" do
     f = Mutations::MoneyFilter.new(:min => 10)
     filtered, errors = f.filter(31)
-    assert_equal 31, filtered
+    assert_equal BigDecimal.new('31'), filtered
     assert_equal nil, errors
   end
 
   it "considers high numbers invalid" do
     f = Mutations::MoneyFilter.new(:max => 10)
     filtered, errors = f.filter(31)
-    assert_equal 31, filtered
+    assert_equal BigDecimal.new('31'), filtered
     assert_equal :max, errors
   end
 
   it "considers high numbers vaild" do
     f = Mutations::MoneyFilter.new(:max => 10)
     filtered, errors = f.filter(3)
-    assert_equal 3, filtered
+    assert_equal BigDecimal.new('3'), filtered
     assert_equal nil, errors
   end
 
