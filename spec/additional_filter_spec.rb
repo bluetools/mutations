@@ -77,6 +77,8 @@ describe "Mutations::AdditionalFilter" do
       class AdditionalWithBlockFilter < Mutations::AdditionalFilter
 
         def initialize(opts={}, &block)
+          super(opts)
+
           if block_given?
             instance_eval &block
           end
@@ -109,7 +111,7 @@ describe "Mutations::AdditionalFilter" do
     end
 
     it "can have a block constructor" do
-      assert_equal true, TestCommandUsingBlockArgument.run!(filter: {})
+      assert_equal true, TestCommandUsingBlockArgument.run!
     end
 
   end
