@@ -72,5 +72,45 @@ describe "Mutations::AdditionalFilter" do
       assert outcome.success?
       assert_equal nil, outcome.errors
     end
+
+    module Mutations
+      class AdditionalWithBlockFilter < Mutations::AdditionalFilter
+
+        def initialize(opts={}, &block)
+          if block_given?
+            instance_eval &block
+          end
+        end
+
+        def should_be_called
+          @was_called = true
+        end
+
+        def filter(data)
+          if @was_called
+            [true, nil]
+          else
+            [nil, :not_called]
+          end
+        end
+      end
+    end
+
+    class TestCommandUsingBlockArgument < Mutations::Command
+      required do
+        additionalwithblock :filter do
+          should_be_called
+        end
+      end
+
+      def execute
+        true
+      end
+    end
+
+    it "can have a block constructor" do
+      assert_equal true, TestCommandUsingBlockArgument.run!(filter: {})
+    end
+
   end
 end
