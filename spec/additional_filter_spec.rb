@@ -111,7 +111,7 @@ describe "Mutations::AdditionalFilter" do
 
     class TestCommandUsingBlockArgument < Mutations::Command
       required do
-        additionalwithblock :foo do
+        additional_with_block :foo do
           should_be_called
         end
       end
