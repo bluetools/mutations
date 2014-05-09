@@ -36,7 +36,7 @@ module Mutations
     end
 
     def discard_invalid?
-      self.options[:discard_invalid]
+      options[:discard_invalid]
     end
   end
 end

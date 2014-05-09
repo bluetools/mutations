@@ -38,7 +38,7 @@ module Mutations
 
       # Validates input, but doesn't call execute. Returns an Outcome with errors anyway.
       def validate(*args)
-        new(*args).validate
+        new(*args).validation_outcome
       end
 
       def input_filters
@@ -60,7 +60,11 @@ module Mutations
         h.merge!(arg)
       end
 
+      # Do field-level validation / filtering:
       @inputs, @errors = self.input_filters.filter(@raw_inputs)
+
+      # Run a custom validation method if supplied:
+      validate unless has_errors?
     end
 
     def input_filters
@@ -85,10 +89,6 @@ module Mutations
       end
     end
 
-    def validate
-      validation_outcome
-    end
-
     def validation_outcome(result = nil)
       Outcome.new(!has_errors?, has_errors? ? nil : result, @errors, @inputs)
     end
@@ -96,6 +96,10 @@ module Mutations
   protected
 
     attr_reader :inputs, :raw_inputs
+
+    def validate
+      # Meant to be overridden
+    end
 
     def execute
       # Meant to be overridden
@@ -120,8 +124,10 @@ module Mutations
     end
 
     def merge_errors(hash)
-      @errors ||= ErrorHash.new
-      @errors.merge!(hash)
+      if hash.any?
+        @errors ||= ErrorHash.new
+        @errors.merge!(hash)
+      end
     end
 
   end

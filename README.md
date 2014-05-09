@@ -233,7 +233,23 @@ unless outcome.success?
 end
 ```
 
-You can add errors within execute if the default validations are insufficient:
+You can add errors in a validate method if the default validations are insufficient. Errors added by validate will prevent the execute method from running.
+
+```ruby
+#...
+def validate
+  if password != password_confirmation
+    add_error(:password_confirmation, :doesnt_match, "Your passwords don't match")
+  end
+end
+# ...
+
+# That error would show up in the errors hash:
+outcome.errors.symbolic # => {password_confirmation: :doesnt_match}
+outcome.errors.message # => {password_confirmation: "Your passwords don't match"}
+```
+
+Alternatively you can also add these validations in the execute method:
 
 ```ruby
 #...
@@ -271,4 +287,3 @@ Yes, but I don't think it's a very good idea. Better to compose.
 ### Can I use this with Rails forms helpers?
 
 Somewhat. Any form can submit to your server, and mutations will happily accept that input. However, if there are errors, there's no built-in way to bake the errors into the HTML with Rails form tag helpers. Right now this is really designed to support a JSON API.  You'd probably have to write an adapter of some kind.
-
