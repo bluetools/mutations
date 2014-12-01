@@ -10,12 +10,16 @@ module Mutations
 
     def filter(data)
 
+      if options[:empty_is_nil] && data == ""
+        data = nil
+      end
+
       # Handle nil case
-      if data.nil? || (options[:empty_is_nil] && data == "")
+      if data.nil?
         return [nil, nil] if options[:nils]
         return [nil, :nils]
       end
-      
+
       # Now check if it's empty:
       return [data, :empty] if data == ""
 
